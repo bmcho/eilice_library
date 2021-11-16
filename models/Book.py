@@ -14,8 +14,8 @@ class Book(db.model, UserMixin) :
     description = db.Column(db.String(1000))
     link = db.Column(db.String(200))
 
-    FK_BookBroow = db.relationship('BookBorrow', backref='user')
-    FK_BookCommnet = db.relationship('BookComment', backref='user')
+    FK_BookBroow = db.relationship('BookBorrow', backref='book')
+    FK_BookCommnet = db.relationship('BookComment', backref='book')
 
     def __init__(self, isbn, book_name, publisher, author, publication_date, page, description, link) :
         self.isbn = isbn
