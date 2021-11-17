@@ -1,6 +1,5 @@
 from flask import Flask, render_template
 from db_connect import db
-from flask_login import LoginManager
 
 from models.User import User
 
