@@ -1,11 +1,10 @@
 from db_connect import db
-from flask_login import UserMixin
+from . import BookBorrow, BookCommnet
 
-
-class User(db.model, UserMixin) :
+class User(db.Model) :
     __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key=True, nullable=False,autoincrement=True)
-    user_name = db.Column(db.String(30), nullable=False)
+    id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
+    user_name = db.Column(db.String(100), nullable=False)
     user_pw = db.Column(db.String(200), nullable=False)
 
     FK_BookBroow = db.relationship('BookBorrow', backref='user')

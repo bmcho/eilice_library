@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block scripts %}
+<script>
+	function signup() {
+		let user_name = $('#user_name').val()
+		let user_pw = $('#user_pw').val()
+		console.log("!!")
+		$.ajax({
+			url:'/signup',
+			type: 'POST',
+			data: {
+				'user_name': user_name,
+				'user_pw' : user_pw
+			},
+			success: function(res) {
+				if(res['result'] == 'success') {
+					alert("성공")
+					window.location.href = '/'
+				} else {
+					window.location.reload()
+				}
+			}
+		})
+	}
+</script>
+{% endblock %}
+
+{% block content %}
+hello signup
+<div class="container-fluid">
+	{% for message in get_flashed_messages() %}
+        <div class="alert alert-warning text-center" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+	<div class="card text-center">
+		<div class="card-body">
+			<div class="mb-3 row justify-content-center">
+				<label for="inputUsername" class="col-sm-1 col-form-label">아이디</label>
+				<div class="col-sm-3">
+					<input type="email" class="form-control" id="user_name" required>
+				</div>
+			</div>
+			<div class="mb-3 row justify-content-center">
+				<label for="inputPassword" class="col-sm-1 col-form-label">비밀번호</label>
+				<div class="col-sm-3">
+					<input type="password" class="form-control" id="user_pw" required>
+				</div>
+			</div>
+			<div class="col-auto">
+				<button class="btn btn-primary btn-lg" onClick=signup()>회원가입</button>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

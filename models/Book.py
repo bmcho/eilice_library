@@ -2,7 +2,7 @@ from db_connect import db
 from flask_login import UserMixin
 
 
-class Book(db.model, UserMixin) :
+class Book(db.Model) :
     __tablename__ = 'book'
     id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
     isbn = db.Column(db.Integer, primary_key=True, nullable=False)

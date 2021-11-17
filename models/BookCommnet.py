@@ -1,7 +1,7 @@
 from db_connect import db
 from flask_login import UserMixin
 
-class BookComment(db.model, UserMixin) :
+class BookComment(db.Model) :
     __tablename__ = 'book_comment'
     id = db.Column(db.Integer, primary_key=True, nullable=False,autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
