@@ -31,11 +31,11 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
-                        {% if not session['user_name'] %}
+                        {% if g.user_id %}
+                        <a class="nav-link" href="/signout">SignOut</a>
+                        {% else %}
                         <a class="nav-link" href="/signin">SignIn</a>
                         <a class="nav-link" href="/signup">SignUp</a>
-                        {% else %}
-                        <a class="nav-link" href="/signout">SignOut</a>
                         {% endif %}
                     </div>
                 </div>

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block scripts %}
+<style>
+    .wapper{
+        position: relative;
+    }
+    .book-wapper {
+        border: 1px solid #000;
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    .image {
+        display: flex;
+        flex-direction: column;
+        width: 33%;
+    }
+    img {
+        width: 100px; 
+        height: 100px; 
+        object-fit: cover; /* 아래에서 다룰 속성값 */ 
+        border: 1px solid #000 /* 요소의 크기를 가늠하기위해 추가 */
+    }
+</style>
+    
+<script>
+    function borrow_book(id) {
+        console.log(id)
+        $.ajax({
+			url:'/book/borrow',
+			type: 'POST',
+			data: {
+				'book_id': id,
+			},
+			success: function(res) {
+				if(res['result'] == 'success') {
+                    alert(res['message'])
+					window.location.reload()
+				} else {
+                    alert(res['message'])
+					window.location.reload()
+				}
+			}
+		})
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+hello main
+
+<div class="wapper">
+    <div class="book-wapper">
+        {% for book in book_list %}
+        <div class="image">
+            <img src="{{ url_for('static', filename='src/img/{}.png'.format(book.id)) }}"/>
+            <p><a href="/book/{{ book.id }}">{{ book.book_name }}</a></p>
+            <p>평점 : {{ book.book_rating() }}</p>
+            <p>{{ book.stock }}권 남음</p>
+            <button onclick=borrow_book("{{book.id}}")>대여하기</button>
+        </div>
+        {% endfor%}    
+    </div>
+</div>
+{% endblock %}

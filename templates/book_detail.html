@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block scripts %}
+
+{% endblock %}
+
+{% block content %}
+book_detail
+<div class="wapper">
+    <div class="detail-wapper">
+        <div class="image">
+            <img src="{{ url_for('static', filename='src/img/{}.png'.format(book_data.id)) }}" style="width: 400px;height: 600px; object-fit: cover;"/>
+            <p>책이름 : {{ book_data.book_name }}</p>
+            <p>출판사 : {{ book_data.publisher }}</p>
+            <p>저자 : {{ book_data.author }}</p>
+            <p>출간일 : {{ book_data.publication_date }}</p>
+            <p>페이지수 : {{ book_data.page }}</p>
+            <p>ISBN 코드 : {{ book_data.isbn }}</p>
+            <p>책 소개 : {{ book_data.description }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

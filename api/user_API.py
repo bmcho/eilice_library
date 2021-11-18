@@ -9,8 +9,8 @@ bcrypt = Bcrypt()
 
 @user.before_app_request
 def load_logged_in_user():
-    user_name = session.get('user_name')
-    g.user_name = None if user_name is None else user_name
+    user_id = session.get('user_id')
+    g.user_id = None if user_id is None else user_id
 
 @user.route('/signin', methods=['GET','POST']) 
 def signin():
@@ -19,13 +19,12 @@ def signin():
     else :
         user_name = request.form.get('user_name')
         user_pw = request.form.get('user_pw')
-
         user = User.query.filter(User.user_name == user_name).first()
         message,messageType = None, None
 
         if user is not None :
             if bcrypt.check_password_hash(user.user_pw, user_pw):
-                session['user_name'] = user.user_name
+                session['user_id'] = user.id
                 return jsonify(result='success')
             else :
                 message,messageType = 'ID 혹은 비밀번호를 잘못 입력하셨거나 등록되지 않은 ID 입니다.', 'warning'

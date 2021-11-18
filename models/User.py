@@ -1,5 +1,6 @@
+from sqlalchemy.orm import lazyload
 from db_connect import db
-from . import BookBorrow, BookCommnet
+from . import BookBorrow, BookComment
 
 class User(db.Model) :
     __tablename__ = 'user'
@@ -8,7 +9,7 @@ class User(db.Model) :
     user_pw = db.Column(db.String(200), nullable=False)
 
     FK_BookBroow = db.relationship('BookBorrow', backref='user')
-    FK_BookCommnet = db.relationship('BookComment', backref='user')
+    FK_BookComment = db.relationship('BookComment', backref='user')
 
     def __init__(self, user_name, user_pw) :
         self.user_name = user_name

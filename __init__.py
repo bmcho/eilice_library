@@ -1,7 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, session
+from flask.helpers import url_for
 from db_connect import db
-
-from models.User import User
 
 def create_app(test_config=None) :
     app = Flask(__name__, instance_relative_config=True)
@@ -16,11 +15,17 @@ def create_app(test_config=None) :
 
     db.init_app(app)
 
-    from .api import user_API
+    from .api import user_API, book_API
     app.register_blueprint(user_API.user)
+    app.register_blueprint(book_API.book)
 
     @app.route('/')
     def index() :
-        return render_template('index.html')
+        user_id = session.get('user_id')
+        print(user_id)
+        if user_id is not None :
+            return redirect(url_for('book.book_list'))
+        else :
+            return redirect(url_for('user.signin'))
 
     return app
