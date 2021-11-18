@@ -26,3 +26,12 @@
 2. Jinja2 extends(base.html) 구현
 * 비고
     * 내일 DB 설계 다시 해야 함
+
+---
+### 2021-11-18
+1. 책 리스트, 책 상세화면 구현
+2. 대여기능 구현
+3. data import
+4. DB 설계 변경 ([ERD](https://www.erdcloud.com/d/vbmL8bvNSgHjruJW5))
+* 비고
+    * 전체적인 UI 흐름이 매끄럽지 않음 
