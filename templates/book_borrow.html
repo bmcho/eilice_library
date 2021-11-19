@@ -23,28 +23,6 @@
         border: 1px solid #000 /* 요소의 크기를 가늠하기위해 추가 */
     }
 </style>
-    
-<script>
-    function borrow_book(id) {
-        console.log(id)
-        $.ajax({
-			url:'/book/borrow',
-			type: 'POST',
-			data: {
-				'book_id': id,
-			},
-			success: function(res) {
-				if(res['result'] == 'success') {
-                    alert(res['message'])
-					window.location.reload()
-				} else {
-                    alert(res['message'])
-					window.location.reload()
-				}
-			}
-		})
-    }
-</script>
 {% endblock %}
 
 {% block content %}
@@ -52,13 +30,12 @@ hello main
 
 <div class="wapper">
     <div class="book-wapper">
-        {% for book in book_list %}
+        {% for book in borrow_list %}
         <div class="image">
             <img src="{{ url_for('static', filename='src/img/{}.png'.format(book.id)) }}"/>
-            <p><a href="/book/{{ book.id }}">{{ book.book_name }}</a></p>
-            <p>평점 : {{ book.book_rating() }}</p>
-            <p>{{ book.stock }}권 남음</p>
-            <button onclick="borrow_book('{{book.id}}')">대여하기</button>
+            <p>{{ book.book_name }}</p>
+            <p>평점 : {{ book.rating }}</p>
+            <p>대여일 :{{ book.borrow_date.strftime('%Y-%m-%d') }} ~ {{ book.return_date.strftime('%Y-%m-%d') }}</p>
         </div>
         {% endfor%}    
     </div>

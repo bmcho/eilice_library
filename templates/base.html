@@ -23,7 +23,7 @@
     <div class="wrap">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/">Main</a>
+                <a class="navbar-brand" href="/">메인화면</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
                     aria-label="Toggle navigation">
@@ -32,10 +32,12 @@
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
                         {% if g.user_id %}
-                        <a class="nav-link" href="/signout">SignOut</a>
+                        <a class="nav-link" href="/book/borrow">대여기록</a>
+                        <a class="nav-link" href="/book/return">반납하기</a>
+                        <a class="nav-link" href="/signout">로그아웃</a>
                         {% else %}
-                        <a class="nav-link" href="/signin">SignIn</a>
-                        <a class="nav-link" href="/signup">SignUp</a>
+                        <a class="nav-link" href="/signin">로그인</a>
+                        <a class="nav-link" href="/signup">회원가입</a>
                         {% endif %}
                     </div>
                 </div>

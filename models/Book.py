@@ -1,7 +1,5 @@
 from db_connect import db
 from . import BookBorrow, BookComment
-from sqlalchemy import func
-from sqlalchemy.ext.hybrid import hybrid_property
 
 class Book(db.Model) :
     __tablename__ = 'book'
@@ -17,7 +15,7 @@ class Book(db.Model) :
     image_url = db.Column(db.String(100))
     stock = db.Column(db.Integer)
 
-    FK_BookBroow = db.relationship('BookBorrow', backref='book')
+    FK_BookBorrow = db.relationship('BookBorrow', backref='book')
     FK_BookComment = db.relationship('BookComment', backref='book')
 
     def __init__(self, isbn, book_name, publisher, author, publication_date, page, description, link, image_url, stock) :

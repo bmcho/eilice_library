@@ -26,7 +26,6 @@
     
 <script>
     function borrow_book(id) {
-        console.log(id)
         $.ajax({
 			url:'/book/borrow',
 			type: 'POST',
@@ -58,7 +57,6 @@ hello main
             <p><a href="/book/{{ book.id }}">{{ book.book_name }}</a></p>
             <p>평점 : {{ book.book_rating() }}</p>
             <p>{{ book.stock }}권 남음</p>
-            <button onclick="borrow_book('{{book.id}}')">대여하기</button>
         </div>
         {% endfor%}    
     </div>

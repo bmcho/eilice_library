@@ -25,13 +25,14 @@
 </style>
     
 <script>
-    function borrow_book(id) {
-        console.log(id)
+    function return_book(book_id, borrow_id) {
+        console.log("!")
         $.ajax({
-			url:'/book/borrow',
+			url:'/book/return',
 			type: 'POST',
 			data: {
-				'book_id': id,
+				'book_id': book_id,
+                'borrow_id':borrow_id
 			},
 			success: function(res) {
 				if(res['result'] == 'success') {
@@ -52,13 +53,14 @@ hello main
 
 <div class="wapper">
     <div class="book-wapper">
-        {% for book in book_list %}
+        {% for book in borrow_list %}
         <div class="image">
             <img src="{{ url_for('static', filename='src/img/{}.png'.format(book.id)) }}"/>
-            <p><a href="/book/{{ book.id }}">{{ book.book_name }}</a></p>
-            <p>평점 : {{ book.book_rating() }}</p>
-            <p>{{ book.stock }}권 남음</p>
-            <button onclick="borrow_book('{{book.id}}')">대여하기</button>
+            <p>{{ book.book_name }}</p>
+            <p>평점 : {{ book.rating }}</p>
+            <p>대여일 :{{ book.borrow_date.strftime('%Y-%m-%d') }}</p>
+            <p>반납예정일 : {{ book.return_due_date.strftime('%Y-%m-%d') }}</p>
+            <button onclick="return_book('{{book.id}}', '{{book.borrow_id}}')">반납하기</button>
         </div>
         {% endfor%}    
     </div>

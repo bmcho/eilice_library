@@ -8,7 +8,7 @@ class User(db.Model) :
     user_name = db.Column(db.String(100), nullable=False)
     user_pw = db.Column(db.String(200), nullable=False)
 
-    FK_BookBroow = db.relationship('BookBorrow', backref='user')
+    FK_BookBorrow = db.relationship('BookBorrow', backref='user')
     FK_BookComment = db.relationship('BookComment', backref='user')
 
     def __init__(self, user_name, user_pw) :

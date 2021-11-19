@@ -15,13 +15,17 @@ def load_logged_in_user():
 @user.route('/signin', methods=['GET','POST']) 
 def signin():
     if request.method == 'GET' :
-        return render_template('signin.html')
+        if session.get("user_id") is not None :
+            return redirect(url_for('index'))
+        else :
+            return render_template('signin.html')
     else :
+        print("확인")
         user_name = request.form.get('user_name')
         user_pw = request.form.get('user_pw')
         user = User.query.filter(User.user_name == user_name).first()
         message,messageType = None, None
-
+        
         if user is not None :
             if bcrypt.check_password_hash(user.user_pw, user_pw):
                 session['user_id'] = user.id

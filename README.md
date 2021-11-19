@@ -35,3 +35,10 @@
 4. DB 설계 변경 ([ERD](https://www.erdcloud.com/d/vbmL8bvNSgHjruJW5))
 * 비고
     * 전체적인 UI 흐름이 매끄럽지 않음 
+
+### 2021-11-19
+1. 책 대여목록, 책 반납목록 화면 구현
+2. 반납 기능 구현
+3. 상당 base.html 변경
+* 비고
+ * SQLAlchemy subquery, join 활용 - 아직 ORM이 익숙하지 않아서 사용하기 힘들었음.
