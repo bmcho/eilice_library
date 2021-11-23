@@ -29,6 +29,4 @@ class Book(db.Model) :
         self.link = link
         self.image_url = image_url
         self.stock = stock
-
-    def book_rating(self):
-        return round(sum(Comment.rating for Comment in self.FK_BookComment)/len(self.FK_BookComment)) if len(self.FK_BookComment) != 0 else 0
+    

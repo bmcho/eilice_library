@@ -1,11 +1,118 @@
 {% extends 'base.html' %}
 
 {% block scripts %}
+<script>
+    function write_commnet() {
+        let book_id = new URL(window.location.href).searchParams.get("id");
+        let comment = $('#comment').val()
+        let rating = $('#rating').val()
 
+        console.log(comment,rating)
+        $.ajax({
+            url: "/book/detail",
+            type: "POST",
+            data: {
+                'book_id': book_id,
+                'comment': comment,
+                'rating': rating
+            },
+            success: function(res) {
+                if(res['result'] == 'success') {
+                    alert(res['message'])
+					window.location.reload()
+				} else {
+                    alert(res['message'])
+					window.location.reload()
+				}
+            }
+        })
+    }
+</script>
+
+<style>
+    img {
+        height: 400px;
+        width: 100%;
+    }
+    table {
+        font-size:1.3rem;
+    }
+    
+    .basic-info {
+        border: 1px solid rgba(0,0,0,0.1)
+    }
+
+    .book-introduce {
+        height: 25rem;
+        font-size: 1.3rem;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-book_detail
+<header class="bg-primary py-3">
+    <div class="container px-4 px-lg-5 my-1">
+        <div class="text-center text-white">
+            <h1 class="display-3 fw-bolder">Elice Libray</h1>
+            <p class="display-6 lead fw-normal text-white-70 mb-0">Book Introduction</p>
+        </div>
+    </div>
+</header>
+
+<div class="container py-1 mt-3">
+    <div class="row basic-info mb-4">
+        <div class="col-4">
+            <div class="card my-3">
+                <img class="card-img-top" src="{{ url_for('static', filename='src/img/{}.png'.format(book_data.id)) }}" alt="">
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <td>책이름</td>
+                                <td>{{ book_data.book_name }}</td>
+                            </tr>
+                            <tr>
+                                <td>출판사</td>
+                                <td>{{ book_data.publisher }}</td>
+                            </tr>
+                            <tr>
+                                <td>저자</td>
+                                <td>{{ book_data.author }}</td>
+                            </tr>
+                            <tr>
+                                <td>출간일</td>
+                                <td>{{ book_data.publication_date }}</td>
+                            </tr>
+                            <tr>
+                                <td>페이지수</td>
+                                <td>{{ book_data.page }}</td>
+                            </tr>
+                            <tr>
+                                <td>ISBN코드</td>
+                                <td>{{ book_data.isbn }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+    <p style="font-size:1.3rem;">책소개</p>
+    <div class="row card-body basic-info mb-4">
+        
+        <div class="book-introduce">
+            {{ book_data.description }}
+        </div>
+    </div>
+    <p style="font-size:1.3rem;">댓글</p>
+</div>
+
+<!-- book_detail
 <div class="wapper">
     <div class="detail-wapper">
         <div class="image">
@@ -19,5 +126,33 @@ book_detail
             <p>책 소개 : {{ book_data.description }}</p>
         </div>
     </div>
-</div>
+    <div>
+        <p>댓글</p>
+        <div>
+            {% for comment in comment_data %}
+                <div>
+                    <p>{{ comment.user_name }}</p>
+                    <div>
+                        {{ comment.comment}}
+                    </div>
+                    <div>
+                        {{ comment.rating }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div>
+            <input type="text" id='comment'>
+            <select name="rating" id="rating">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <button onclick=write_commnet()>댓글달기</button>
+        </div>
+    </div>
+</div> -->
 {% endblock %}

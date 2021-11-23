@@ -1,8 +1,10 @@
 from flask import Blueprint, render_template, jsonify, request, session, g
 from flask.helpers import url_for
 from sqlalchemy import func
+import sqlalchemy
 from werkzeug.utils import redirect
 from models.Book import Book
+from models.User import User
 from models.BookBorrow import BookBorrow
 from models.BookComment import BookComment
 from db_connect import db
@@ -13,29 +15,67 @@ book = Blueprint('book', __name__, url_prefix="/book")
 @book.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
-    g.user_id = None if user_id is None else user_id
+    if user_id :
+        g.user_id = user_id
+    else :
+        g.user_id = None
+        redirect(url_for('index'))
 
+#도서 메인페이지
 @book.route('/', methods=['GET'])
 def book_list() :
     if session.get('user_id') :
-        book_list = Book.query.all()
-        return render_template('book.html', book_list=book_list)
+        ratingQuery = db.session.query(BookComment.book_id, func.cast(func.round(func.avg(BookComment.rating)), sqlalchemy.Integer).label('rating')).group_by(BookComment.book_id).subquery()
+
+        book_list = db.session.query(Book.id, Book.book_name, Book.stock, ratingQuery.c.book_id, ratingQuery.c.rating) \
+                    .outerjoin(ratingQuery, ratingQuery.c.book_id == Book.id).all()
+
+        return render_template('book_list.html', book_list=book_list)
     else :
         return redirect(url_for('index'))
 
-@book.route('/<id>')
-def book_detail(id) :
+#책 상세 페이지
+# @book.route('/<id>')
+# def book_detail(id) :
+#     book_data = Book.query.filter(Book.id == id).first()
+#     comment_data = db.session.query(BookComment.comment, BookComment.rating, User.user_name).join(User, BookComment.user_id == User.id).filter(BookComment.book_id == id).all()
 
-    book_data = Book.query.filter(Book.id == id).first()
-    return render_template('book_detail.html',book_data=book_data)
+#     return render_template('book_detail.html',book_data=book_data, comment_data=comment_data)
 
+#책 상세 페이지
+#댓글, 댓글 수정
+@book.route('/detail', methods=['GET','POST','FETCH'])
+def book_detail() :
+    if request.method == 'GET' :
+        id = request.args.get('id')
+
+        book_data = Book.query.filter(Book.id == id).first()
+        comment_data = db.session.query(BookComment.comment, BookComment.rating, User.user_name).join(User, BookComment.user_id == User.id).filter(BookComment.book_id == id).all()
+
+        return render_template('book_detail.html',book_data=book_data, comment_data=comment_data)
+    elif request.method == 'POST' :
+        user_id = session.get("user_id")    
+        book_id = request.form.get('book_id')
+        comment = request.form.get('comment')
+        rating = request.form.get('rating')
+        
+        try :
+            db.session.add(BookComment(user_id, book_id, comment, rating))
+            db.session.commit()
+            return jsonify(result='success', message='댓글이 성공적으로 작성되었습니다.')
+        except Exception as ex:
+            print(ex)
+            db.session.rollback()
+            return jsonify(result='fail', message='댓글작성에 실패하였습니다. 관리자에게 문의바랍니다.')
+        
+#대여기록 페이지
 @book.route('/borrow', methods=['GET','POST']) 
 def book_borrow() :
     if request.method == 'GET':
         user_id = session.get('user_id')
-        ratingQuery = db.session.query(BookComment.book_id, func.round(func.avg(BookComment.rating)).label('rating')).group_by(BookComment.book_id).subquery()
+        ratingQuery = db.session.query(BookComment.book_id, func.cast(func.round(func.avg(BookComment.rating)), sqlalchemy.Integer).label('rating')).group_by(BookComment.book_id).subquery()
 
-        borrow_list = db.session.query(Book.id, Book.book_name, BookBorrow.id.label('borrow_id'), BookBorrow.book_id, BookBorrow.borrow_date, BookBorrow.return_date, BookBorrow.return_flag) \
+        borrow_list = db.session.query(Book.id, Book.book_name, BookBorrow.id.label('borrow_id'), BookBorrow.book_id, BookBorrow.borrow_date, BookBorrow.return_date, BookBorrow.return_flag, ratingQuery.c.book_id, ratingQuery.c.rating) \
                     .join(BookBorrow, BookBorrow.book_id == Book.id) \
                     .outerjoin(ratingQuery, ratingQuery.c.book_id == Book.id) \
                     .filter(BookBorrow.user_id == user_id, BookBorrow.return_flag == 'T').all()
@@ -62,13 +102,15 @@ def book_borrow() :
             book_data.stock -= 1
             db.session.add(bb)
             db.session.commit()
-        except :
+        except Exception as ex:
+            print(ex)
             db.session.rollback()
             return jsonify(result='fail', message="대여를 실패하였습니다. 관리자에게 문의 부탁드립니다.")
 
         #위 모든 로직이 통과되었을겨우에는 성공  
         return jsonify(result='success', message=f"대여하였습니다. 반납일은 {bb.return_due_date.strftime('%Y-%m-%d') } 까지입니다.")
 
+#반납페이지
 @book.route('/return', methods=['GET','POST']) 
 def book_return():
     if request.method == 'GET':
@@ -101,7 +143,8 @@ def book_return():
             borrow.return_date = datetime.today().strftime('%Y-%m-%d')
             book.stock += 1
             db.session.commit()
-        except :
+        except Exception as ex:
+            print(ex)
             db.session.rollback()
             return jsonify(result='fail', message='반납을 실패하였습니다. 관리자에게 문의 부탁드립니다.3')
 

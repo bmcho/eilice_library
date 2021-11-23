@@ -2,7 +2,15 @@
 
 {% block scripts %}
 <script>
-	function signin() {
+	$(document).ready(function() {
+			const element = document.querySelector('#login-form');
+			element.addEventListener('submit', event => {
+  			event.preventDefault();
+  			signin();
+		});
+	})
+	
+	function signin(e) {
 		let user_name = $('#user_name').val()
 		let user_pw = $('#user_pw').val()
 		console.log("!!")
@@ -27,30 +35,39 @@
 {% endblock %}
 
 {% block content %}
-hello signin
-<div class="container-fluid">
-	{% for message in get_flashed_messages() %}
-        <div class="alert alert-warning text-center" role="alert">
-            {{ message }}
-        </div>
-    {% endfor %}
-	<div class="card text-center">
-		<div class="card-body">
-			<div class="mb-3 row justify-content-center">
-				<label for="inputUsername" class="col-sm-1 col-form-label">아이디</label>
-				<div class="col-sm-3">
-					<input type="email" class="form-control" id="user_name" required>
+<div class="container px-5 my-5 px-5">
+	<div class="text-center mb-5">
+		<div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-envelope"></i></div>
+		<h2 class="fw-bolder">로그인</h2>
+		<p class="lead mb-0">도서관 이용에는 로그인이 필요합니다.</p>
+	</div>
+	<div class="row gx-5 justify-content-center">
+		<div class="col-lg-6">
+			{% for message in get_flashed_messages() %}
+        	<div class="alert alert-warning text-center" role="alert">
+            	{{ message }}
+        	</div>
+    		{% endfor %}
+			<form id="login-form">
+				<!-- Name input-->
+				<div class="form-floating mb-3">
+					<input class="form-control" id="user_name" type="text" placeholder="Enter your Email"/>
+					<label for="user_name">아이디(이메일 주소)</label>
+					<div class="invalid-feedback">형식에 맞는 이메일 주소를 입력해주세요.</div>
+					<div class="invalid-feedback" id="email-overlap-check" style="display: none;">이미 가입되어 있는 이메일입니다.</div>
 				</div>
-			</div>
-			<div class="mb-3 row justify-content-center">
-				<label for="inputPassword" class="col-sm-1 col-form-label">비밀번호</label>
-				<div class="col-sm-3">
-					<input type="password" class="form-control" id="user_pw" required>
+				<!-- Email address input-->
+				<div class="form-floating mb-3">
+					<input class="form-control" id="user_pw" type="password" placeholder="Enter your password"/>
+					<label for="user_pw">비밀번호</label>
+					<div class="invalid-feedback">특수문자 무조건 1개이상 포함하여 최소 8자에서 최대 16자의 비밀번호를 입력해주세요.</div>
 				</div>
-			</div>
-			<div class="col-auto">
-				<button class="btn btn-primary btn-lg" onClick=signin()>로그인</button>
-			</div>
+				
+				<div class="d-grid mb-3"><button class="btn btn-primary btn-lg" type="submit" id="submitButton" >로그인</button></div>
+			</form>
+			<form action="/signup">
+				<div class="d-grid"><button class="btn btn-primary btn-lg" type="submit">회원가입</button></div>
+			</form>
 		</div>
 	</div>
 </div>

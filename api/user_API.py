@@ -10,8 +10,13 @@ bcrypt = Bcrypt()
 @user.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
-    g.user_id = None if user_id is None else user_id
+    if user_id :
+        g.user_id = user_id
+    else :
+        g.user_id = None
+        redirect(url_for('index'))
 
+#로그인
 @user.route('/signin', methods=['GET','POST']) 
 def signin():
     if request.method == 'GET' :
@@ -20,7 +25,6 @@ def signin():
         else :
             return render_template('signin.html')
     else :
-        print("확인")
         user_name = request.form.get('user_name')
         user_pw = request.form.get('user_pw')
         user = User.query.filter(User.user_name == user_name).first()
@@ -35,12 +39,7 @@ def signin():
                 flash(message=message, category=messageType)
                 return jsonify(result="fail")
 
-@user.route('/signout')
-def signout() :
-    session.clear()
-    return redirect(url_for('index'))
-
-
+#회원가입
 @user.route('/signup', methods=['GET','POST'])
 def signup() :
     if request.method == 'GET' :
@@ -64,3 +63,9 @@ def signup() :
         db.session.add(addUser)
         db.session.commit()
         return jsonify(result="success")
+
+#로그아웃
+@user.route('/signout')
+def signout() :
+    session.clear()
+    return redirect(url_for('index'))

@@ -2,25 +2,10 @@
 
 {% block scripts %}
 <style>
-    .wapper{
-        position: relative;
-    }
-    .book-wapper {
-        border: 1px solid #000;
-        display: flex;
-        flex-wrap: wrap;
-        width: 100%;
-    }
-    .image {
-        display: flex;
-        flex-direction: column;
-        width: 33%;
-    }
     img {
-        width: 100px; 
-        height: 100px; 
-        object-fit: cover; /* 아래에서 다룰 속성값 */ 
-        border: 1px solid #000 /* 요소의 크기를 가늠하기위해 추가 */
+        height: 250px;
+        width: 100%;
+        border-bottom: solid 1px black;
     }
 </style>
     
@@ -46,19 +31,58 @@
 </script>
 {% endblock %}
 
-{% block content %}
-hello main
 
-<div class="wapper">
-    <div class="book-wapper">
-        {% for book in book_list %}
-        <div class="image">
-            <img src="{{ url_for('static', filename='src/img/{}.png'.format(book.id)) }}"/>
-            <p><a href="/book/{{ book.id }}">{{ book.book_name }}</a></p>
-            <p>평점 : {{ book.book_rating() }}</p>
-            <p>{{ book.stock }}권 남음</p>
+
+{% block content %}
+<header class="bg-primary py-3">
+    <div class="container px-4 px-lg-5 my-1">
+        <div class="text-center text-white">
+            <h1 class="display-3 fw-bolder">Elice Libray</h1>
+            <p class="display-6 lead fw-normal text-white-70 mb-0">Welcome Elice Library</p>
         </div>
-        {% endfor%}    
+    </div>
+</header>
+<div class="py-5">
+    <div class="text-center container px-4 px-lg-5 mt-5">
+        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><div></div></div>
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            
+  
+            {% for book in book_list %}
+            <div class="col mb-5">
+                <div class="card h-100">
+                    <img class="card-img-top" src="{{ url_for('static', filename='src/img/{}.png'.format(book.id)) }}" alt="..." />
+                    <div class="card-body p-1">
+                        <div class="text-center">
+                            <p class="fw-bolder"><a href="/book/detail?id={{ book.id }}">{{ book.book_name }}</a></p>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <p>남은권수 : {{ book.stock }}</p>
+                    </div>
+                    <div class="d-flex justify-content-center small text-warning mb-3">
+                        {% if book.rating%}
+                        {% for _ in range(book.rating) %}
+                        <div class="bi-star-fill"></div>
+                        {% endfor %}
+                        {% for _ in range(book.rating,5) %}
+                        <div class="bi-star"></div>
+                        {% endfor %}
+                        {% else %}
+                        {% for _ in range(5) %}
+                        <div class="bi-star"></div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center">
+                            <button class="btn btn-outline-primary mt-auto" onclick="borrow_book('{{book.id}}')">대여하기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}  
+        </div>
     </div>
 </div>
 {% endblock %}
