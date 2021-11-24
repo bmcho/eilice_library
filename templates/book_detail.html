@@ -2,12 +2,17 @@
 
 {% block scripts %}
 <script>
-    function write_commnet() {
+    function write_comment() {
         let book_id = new URL(window.location.href).searchParams.get("id");
-        let comment = $('#comment').val()
-        let rating = $('#rating').val()
+        let comment = $('#my-comment').val();
+        let rating  = $('input[name="rating"]:checked').val();
 
-        console.log(comment,rating)
+        console.log(comment,rating);
+        if (comment === undefined || rating === undefined) {
+            alert("댓글 또는 평점을 입력하시지 않았습니다.")
+            return 
+        }
+
         $.ajax({
             url: "/book/detail",
             type: "POST",
@@ -24,6 +29,28 @@
                     alert(res['message'])
 					window.location.reload()
 				}
+            }
+        })
+    }
+
+    function deletePost(id) {
+        let user_id = '{{g.user_id}}';
+        console.log(id)
+        $.ajax({
+            url: '/book/detail',
+            type: 'DELETE',
+            data: {
+                    'id': id,
+                    'user_id': user_id
+            },
+            success: function (res) {
+                if (res['result'] == 'success') {
+                    alert(res['message'])
+                    window.location.reload()
+                } else {
+                    alert(res['message'])
+                    window.location.reload()
+                }
             }
         })
     }
@@ -46,6 +73,91 @@
         height: 25rem;
         font-size: 1.3rem;
     }
+
+    .commnet-list{
+        height: 100%;
+    }
+
+    .comment-completed {
+        border: 1px solid rgba(0,0,0,0.1)
+    }
+    #edit-area .comment-contents, .modify-content {
+        padding: 5px 1rem;
+        margin-bottom: 3px;
+        height: 100%;
+        width: 70%;
+    }
+    #edit-area {
+        height: 100%;
+        border: 1px solid rgba(0,0,0,0.1);
+        border-radius: 5px;
+    }
+    #edit-area .rating-start {
+        text-align: center;
+        width: 30%;
+        margin: auto 0;
+        font-size: 1.5rem;
+        color:mediumpurple;
+    }
+
+    .star-cb-group {
+        unicode-bidi: bidi-override;
+        direction: rtl;
+    }
+    
+    .star-cb-group * {
+        font-size: 2.5rem;
+        
+    }
+    .star-cb-group > input {
+        display: none;
+    }
+    .star-cb-group > input + label {
+        display: inline-block;
+        overflow: hidden;
+        text-indent: 9999px;
+        width: 1em;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+    .star-cb-group > input + label:before {
+        display: inline-block;
+        text-indent: -9999px;
+        content: "\1F7CA";
+        color: #E6E6E6;
+    }
+    .star-cb-group > input:checked ~ label:before, .star-cb-group > input + label:hover ~ label:before, .star-cb-group > input + label:hover:before {
+        content: "\1F7CA";
+        color: mediumpurple;
+        text-shadow: 0 0 1px #333;
+    }
+    .star-cb-group > .star-cb-clear + label {
+        text-indent: -9999px;
+        width: 0.5em;
+        margin-left: -0.5em;
+    }
+    .star-cb-group > .star-cb-clear + label:before {
+        width: 0.5em;
+    }
+    .star-cb-group:hover > input + label:before {
+        content: "\1F7CA";
+        color: #E6E6E6;
+        text-shadow: none;
+    }
+    .star-cb-group:hover > input + label:hover ~ label:before, .star-cb-group:hover > input + label:hover:before {
+        content: "\1F7CA";
+        color: mediumpurple;
+        text-shadow: 0 0 1px #333;
+    }
+
+    #comment-rating {
+        margin: auto;
+        padding:0;
+        width: 30%;
+
+    }
+
 </style>
 {% endblock %}
 
@@ -104,55 +216,63 @@
     <div>
     <p style="font-size:1.3rem;">책소개</p>
     <div class="row card-body basic-info mb-4">
-        
         <div class="book-introduce">
             {{ book_data.description }}
         </div>
     </div>
     <p style="font-size:1.3rem;">댓글</p>
-</div>
-
-<!-- book_detail
-<div class="wapper">
-    <div class="detail-wapper">
-        <div class="image">
-            <img src="{{ url_for('static', filename='src/img/{}.png'.format(book_data.id)) }}" style="width: 400px;height: 600px; object-fit: cover;"/>
-            <p>책이름 : {{ book_data.book_name }}</p>
-            <p>출판사 : {{ book_data.publisher }}</p>
-            <p>저자 : {{ book_data.author }}</p>
-            <p>출간일 : {{ book_data.publication_date }}</p>
-            <p>페이지수 : {{ book_data.page }}</p>
-            <p>ISBN 코드 : {{ book_data.isbn }}</p>
-            <p>책 소개 : {{ book_data.description }}</p>
+    <div class="row card-body mb-4 comment-list">
+        <div class="card mb-2">
+            <h5 class="pt-3 px-3">댓글 작성</h5>
+            <div class="card-body">
+                <div class="mb-3 d-flex">
+                    <textarea id='my-comment' class="form-control" rows="3"></textarea>
+                        <fieldset id="comment-rating">
+                           <span class="star-cb-group">
+                               <input type="radio" id="rating-5" name="rating" value="5" /><label for="rating-5">5</label>
+                               <input type="radio" id="rating-4" name="rating" value="4" /><label for="rating-4">4</label>
+                               <input type="radio" id="rating-3" name="rating" value="3" /><label for="rating-3">3</label>
+                               <input type="radio" id="rating-2" name="rating" value="2" /><label for="rating-2">2</label>
+                               <input type="radio" id="rating-1" name="rating" value="1" /><label for="rating-1">1</label>
+                               <input type="radio" id="rating-0" name="rating" value="0" class="star-cb-clear" /><label for="rating-0">0</label>
+                           </span>
+                        </fieldset>
+                </div>
+                <button class="btn btn-primary" onclick="write_comment()">작성하기</button>
+            </div>
         </div>
-    </div>
-    <div>
-        <p>댓글</p>
-        <div>
-            {% for comment in comment_data %}
-                <div>
-                    <p>{{ comment.user_name }}</p>
-                    <div>
-                        {{ comment.comment}}
-                    </div>
-                    <div>
-                        {{ comment.rating }}
+        {% for post in comment_data %}
+        <div class="card mt-2">
+            <div class="card-body">
+                <div class="mb-2">
+                    <label class="form-label px-1">{{post.user_name}}</label>
+                    <div id="edit-area" class='d-flex'>
+                        <p class="comment-contents" id='userContent{{post.id}}'>{{post.comment}}</p>
+                        <div class="rating-start d-flex justify-content-center">
+                        {% if post.rating %}
+                        {% for _ in range(post.rating) %}
+                        <div class="bi-star-fill"></div>
+                        {% endfor %}
+                        {% for _ in range(post.rating,5) %}
+                        <div class="bi-star"></div>
+                        {% endfor %}
+                        {% else %}
+                        {% for _ in range(5) %}
+                        <div class="bi-star"></div>
+                        {% endfor %}
+                        {% endif %}
+                        </div>
                     </div>
                 </div>
-            {% endfor %}
+            </div>
+            {% if post.user_id == g.user_id %}
+            <div class="card-body text-muted my-2 d-flex justify-content-end">
+                <button class="btn btn-sm btn-warning " onclick="deletePost('{{post.id}}')">삭제하기</button>
+            </div>
+            {% endif %}
         </div>
-
-        <div>
-            <input type="text" id='comment'>
-            <select name="rating" id="rating">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
-            <button onclick=write_commnet()>댓글달기</button>
-        </div>
+       
+        {% endfor %}
     </div>
-</div> -->
+</div>
 {% endblock %}

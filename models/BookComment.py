@@ -1,4 +1,5 @@
 from db_connect import db
+from datetime import datetime
 
 class BookComment(db.Model) :
     __tablename__ = 'book_comment'
@@ -7,6 +8,7 @@ class BookComment(db.Model) :
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'))
     comment = db.Column(db.String(200), nullable=False)
     rating = db.Column(db.Integer, nullable=False)
+    comment_date = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __init__(self, user_id, book_id, comment, rating) :
         self.user_id = user_id

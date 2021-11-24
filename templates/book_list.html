@@ -7,10 +7,14 @@
         width: 100%;
         border-bottom: solid 1px black;
     }
+    .page-link {
+        cursor: pointer;
+    }
 </style>
     
 <script>
     function borrow_book(id) {
+        console.log("{{ totalPageb }}")
         $.ajax({
 			url:'/book/borrow',
 			type: 'POST',
@@ -28,10 +32,18 @@
 			}
 		})
     }
+
+    function pageMove(direction, totalPage) {
+        let page = new URL(window.location.href).searchParams.get("page");
+        page = undefined ? 1 : page;
+        page = direction === "left" ? --page : ++page;
+
+        if (page == 0 || page > totalPage) return;
+
+        window.location.href = `/book?page=${page}`;
+    }
 </script>
 {% endblock %}
-
-
 
 {% block content %}
 <header class="bg-primary py-3">
@@ -84,5 +96,46 @@
             {% endfor %}  
         </div>
     </div>
+    <nav aria-label="Pagination">
+        <hr class="my-0">
+        <ul class="pagination justify-content-center my-4">
+            <li class="page-item"><a class="page-link" onclick="pageMove('left','{{totalPage}}')" >PREV</a></li>
+            {% if totalPage <= 5 %}
+
+                {% for i in range(1,totalPage+1) %}
+                {% if page == i %}
+                <li class="page-item active disabled" aria-current="page"><a class="page-link" href="#!">{{i}}</a></li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="/book?page={{i}}">{{i}}</a></li>
+                {% endif %}
+                {% endfor %}
+
+            {% elif page == 2 %}
+
+                <li class="page-item"><a class="page-link" href="/book?page=1">1</a></li>
+                <li class="page-item active disabled" aria-current="page"><a class="page-link" href="#!">2</a></li>
+                {% for i in range(page+1,6) %}
+                <li class="page-item"><a class="page-link" href="/book?page={{i}}">{{i}}</a></li>
+                {% endfor %}
+
+            {% elif page == totalPage-1 %}
+
+                {% for i in range(page-3, page) %}
+                <li class="page-item"><a class="page-link" href="/book?page={{i}}">{{i}}</a></li>
+                {% endfor %}
+                <li class="page-item active disabled" aria-current="page"><a class="page-link" href="#!">{{i}}</a></li>
+                <li class="page-item"><a class="page-link" href="/book?page={{page+1}}">{{page+1}}</a></li>
+
+            {% elif page == totalPage %}
+
+                {% for i in range(page-4,page) %}
+                <li class="page-item"><a class="page-link" href="/book?page={{i}}">{{i}}</a></li>
+                {% endfor %}
+                <li class="page-item active disabled" aria-current="page"><a class="page-link" href="#!">{{i}}</a></li>
+
+            {% endif %}
+            <li class="page-item"><a class="page-link" onclick="pageMove('right','{{totalPage}}')">NEXT</a></li>
+        </ul>
+    </nav>
 </div>
 {% endblock %}

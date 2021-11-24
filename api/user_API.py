@@ -14,7 +14,6 @@ def load_logged_in_user():
         g.user_id = user_id
     else :
         g.user_id = None
-        redirect(url_for('index'))
 
 #로그인
 @user.route('/signin', methods=['GET','POST']) 
