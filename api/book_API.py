@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, request, session, g
+from flask import Blueprint, render_template, jsonify, request, session, g, json
 from flask.helpers import url_for
 from sqlalchemy import func
 import sqlalchemy
@@ -10,8 +10,10 @@ from models.BookComment import BookComment
 from db_connect import db
 from datetime import datetime
 from math import ceil
+from flask_restful import Api, Resource
 
 book = Blueprint('book', __name__, url_prefix="/book")
+api = Api(book)
 
 @book.before_app_request
 def load_logged_in_user():
@@ -21,11 +23,38 @@ def load_logged_in_user():
     else :
         g.user_id = None
 
+# class BookSearch(Resource):
+#     def get(self) :
+#         if session.get('user_id') :
+#             page = int(request.args.get('page', 1))
+#             bookname = request.args.get('name')
+#             limit = 8
+#             totalPage = ceil(db.session.query(func.count(Book.id).label("book_count")).first().book_count/8)
+
+#             if totalPage == 0 :
+#                 totalPage = 1 
+#             elif page >= totalPage :
+#                 page = totalPage
+#             offset = (page-1) * limit
+
+#             ratingQuery = db.session.query(BookComment.book_id, func.cast(func.round(func.avg(BookComment.rating)), sqlalchemy.Integer).label('rating')).group_by(BookComment.book_id).subquery()
+
+#             book_list = db.session.query(Book.id, Book.book_name, Book.stock, ratingQuery.c.book_id, ratingQuery.c.rating) \
+#                         .outerjoin(ratingQuery, ratingQuery.c.book_id == Book.id).offset(offset).limit(limit).all()
+
+#             return jsonify(result="success", book_list=[(dict(row)) for row in book_list])
+#             # return render_template('book_list.html', book_list=book_list, page=page, totalPage=totalPage)
+#         else :
+#             return redirect(url_for('index'))
+
+# api.add_resource(BookSearch, '/')
+
 #도서 메인페이지
 @book.route('/', methods=['GET'])
 def book_list() :
     if session.get('user_id') :
         page = int(request.args.get('page', 1))
+        bookname = request.args.get('name')
         limit = 8
         totalPage = ceil(db.session.query(func.count(Book.id).label("book_count")).first().book_count/8)
 
@@ -41,6 +70,7 @@ def book_list() :
                     .outerjoin(ratingQuery, ratingQuery.c.book_id == Book.id).offset(offset).limit(limit).all()
 
         return render_template('book_list.html', book_list=book_list, page=page, totalPage=totalPage)
+
     else :
         return redirect(url_for('index'))
 

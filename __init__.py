@@ -3,16 +3,17 @@ from flask import Flask, redirect, session
 from flask.helpers import url_for
 from db_connect import db
 
+import os
+
 def create_app(test_config=None) :
     app = Flask(__name__, instance_relative_config=True)
 
     app.config.from_mapping(
-        SECRET_KEY ='dev',
+        SECRET_KEY = os.environ.get('SECRET_KEY'),
+        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI'),
+        SQLALCHEMY_TRACK_MODIFICATIONS = 'False',
         JSON_AS_ASCII = False
     )
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:root@127.0.0.1:3306/library"
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
 
@@ -30,7 +31,7 @@ def create_app(test_config=None) :
         user_id = session.get('user_id')
         print(user_id)
         if user_id is not None :
-            return redirect(url_for('book.book_list'))
+            return redirect(url_for('book.book_list', page=1))
         else :
             return redirect(url_for('user.signin'))
 

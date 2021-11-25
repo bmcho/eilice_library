@@ -14,7 +14,6 @@
     
 <script>
     function borrow_book(id) {
-        console.log("{{ totalPageb }}")
         $.ajax({
 			url:'/book/borrow',
 			type: 'POST',
@@ -42,6 +41,7 @@
 
         window.location.href = `/book?page=${page}`;
     }
+
 </script>
 {% endblock %}
 
