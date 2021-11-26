@@ -17,7 +17,7 @@ def create_app(test_config=None) :
 
     db.init_app(app)
 
-    from .api import user_API, book_API
+    from api import user_API, book_API
     app.register_blueprint(user_API.user)
     app.register_blueprint(book_API.book)
 
@@ -36,3 +36,8 @@ def create_app(test_config=None) :
             return redirect(url_for('user.signin'))
 
     return app
+
+
+if __name__ == "__main__":
+    app = create_app()
+    app.run(host='0.0.0.0', port=80, debug=False)
