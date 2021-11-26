@@ -29,7 +29,6 @@ def create_app(test_config=None) :
     @app.route('/')
     def index() :
         user_id = session.get('user_id')
-        print(user_id)
         if user_id is not None :
             return redirect(url_for('book.book_list', page=1))
         else :

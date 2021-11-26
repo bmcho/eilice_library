@@ -48,7 +48,7 @@
 			},
 			success: function(res) {
 				if(res['result'] == 'success') {
-					alert("성공")
+					alert(res['message'])
 					window.location.href = '/'
 				} else {
 					window.location.reload()

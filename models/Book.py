@@ -11,14 +11,13 @@ class Book(db.Model) :
     publication_date = db.Column(db.String(10), nullable=False)
     page = db.Column(db.Integer)
     description = db.Column(db.String(2000))
-    link = db.Column(db.String(200))
     image_url = db.Column(db.String(100))
     stock = db.Column(db.Integer)
 
     FK_BookBorrow = db.relationship('BookBorrow', backref='book')
     FK_BookComment = db.relationship('BookComment', backref='book')
 
-    def __init__(self, isbn, book_name, publisher, author, publication_date, page, description, link, image_url, stock) :
+    def __init__(self, isbn, book_name, publisher, author, publication_date, page, description, image_url, stock) :
         self.isbn = isbn
         self.book_name = book_name
         self.publisher = publisher
@@ -26,7 +25,6 @@ class Book(db.Model) :
         self.publication_date = publication_date
         self.page = page
         self.description = description
-        self.link = link
         self.image_url = image_url
         self.stock = stock
     

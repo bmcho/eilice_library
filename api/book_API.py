@@ -54,7 +54,6 @@ def load_logged_in_user():
 def book_list() :
     if session.get('user_id') :
         page = int(request.args.get('page', 1))
-        bookname = request.args.get('name')
         limit = 8
         totalPage = ceil(db.session.query(func.count(Book.id).label("book_count")).first().book_count/8)
 
@@ -81,7 +80,6 @@ def book_detail() :
     if session.get('user_id') :
         if request.method == 'GET' :
             id = request.args.get('id')
-
             book_data = Book.query.filter(Book.id == id).first()
             comment_data = db.session.query(BookComment.id, BookComment.user_id, BookComment.comment, BookComment.rating, User.user_name).join(User, BookComment.user_id == User.id).filter(BookComment.book_id == id).order_by(BookComment.comment_date.desc()).all()
 
@@ -105,10 +103,8 @@ def book_detail() :
         elif request.method == 'DELETE' :
             id = request.form.get("id")    
             user_id = session.get("user_id")    
-            print(id,user_id)
             try :
                 deleteData = BookComment.query.filter(BookComment.id == id, BookComment.user_id == user_id).first()
-                print(deleteData)
                 db.session.delete(deleteData)
                 db.session.commit()
                 return jsonify(result='success', message='댓글이 성공적으로 삭제되었습니다.')
