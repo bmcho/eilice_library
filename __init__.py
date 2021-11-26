@@ -3,17 +3,17 @@ from flask import Flask, redirect, session
 from flask.helpers import url_for
 from db_connect import db
 
+import dotenv
 import os
+
+dotenv.load_dotenv('.env')
 
 def create_app(test_config=None) :
     app = Flask(__name__, instance_relative_config=True)
 
-    app.config.from_mapping(
-        SECRET_KEY = os.environ.get('SECRET_KEY'),
-        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI'),
-        SQLALCHEMY_TRACK_MODIFICATIONS = 'False',
-        JSON_AS_ASCII = False
-    )
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
 
