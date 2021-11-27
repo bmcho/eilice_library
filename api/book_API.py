@@ -23,32 +23,6 @@ def load_logged_in_user():
     else :
         g.user_id = None
 
-# class BookSearch(Resource):
-#     def get(self) :
-#         if session.get('user_id') :
-#             page = int(request.args.get('page', 1))
-#             bookname = request.args.get('name')
-#             limit = 8
-#             totalPage = ceil(db.session.query(func.count(Book.id).label("book_count")).first().book_count/8)
-
-#             if totalPage == 0 :
-#                 totalPage = 1 
-#             elif page >= totalPage :
-#                 page = totalPage
-#             offset = (page-1) * limit
-
-#             ratingQuery = db.session.query(BookComment.book_id, func.cast(func.round(func.avg(BookComment.rating)), sqlalchemy.Integer).label('rating')).group_by(BookComment.book_id).subquery()
-
-#             book_list = db.session.query(Book.id, Book.book_name, Book.stock, ratingQuery.c.book_id, ratingQuery.c.rating) \
-#                         .outerjoin(ratingQuery, ratingQuery.c.book_id == Book.id).offset(offset).limit(limit).all()
-
-#             return jsonify(result="success", book_list=[(dict(row)) for row in book_list])
-#             # return render_template('book_list.html', book_list=book_list, page=page, totalPage=totalPage)
-#         else :
-#             return redirect(url_for('index'))
-
-# api.add_resource(BookSearch, '/')
-
 #도서 메인페이지
 @book.route('/', methods=['GET'])
 def book_list() :
@@ -81,7 +55,7 @@ def book_detail() :
         if request.method == 'GET' :
             id = request.args.get('id')
             book_data = Book.query.filter(Book.id == id).first()
-            comment_data = db.session.query(BookComment.id, BookComment.user_id, BookComment.comment, BookComment.rating, User.user_name).join(User, BookComment.user_id == User.id).filter(BookComment.book_id == id).order_by(BookComment.comment_date.desc()).all()
+            comment_data = db.session.query(BookComment.id, BookComment.user_id, BookComment.comment, BookComment.rating, User.user_nick).join(User, BookComment.user_id == User.id).filter(BookComment.book_id == id).order_by(BookComment.comment_date.desc()).all()
 
             return render_template('book_detail.html',book_data=book_data, comment_data=comment_data)
 

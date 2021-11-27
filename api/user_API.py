@@ -52,6 +52,7 @@ def signup() :
         else :
             user_name = request.form.get('user_name')
             user_pw = request.form.get('user_pw')
+            user_nick = request.form.get('user_nick')
 
             message,messageType = None, None
             #user_name체크
@@ -64,7 +65,7 @@ def signup() :
 
             pw_hash = bcrypt.generate_password_hash(user_pw)
 
-            addUser = User(user_name, pw_hash)
+            addUser = User(user_name, pw_hash, user_nick)
             db.session.add(addUser)
             db.session.commit()
             return jsonify(result="success", message="회원가입을 축하드립니다.!")

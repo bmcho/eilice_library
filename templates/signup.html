@@ -37,14 +37,14 @@
 	function signup() {
 		let user_name = $('#user_name').val()
 		let user_pw = $('#user_pw').val()
-		let pw_confirm = $('#user_pw_confirm').val()
+		let user_nick = $('#user_nick').val()
 		$.ajax({
 			url:'/signup',
 			type: 'POST',
 			data: {
 				'user_name': user_name,
 				'user_pw' : user_pw,
-				'pw_confirm': pw_confirm
+				'user_nick': user_nick
 			},
 			success: function(res) {
 				if(res['result'] == 'success') {
@@ -82,6 +82,13 @@
 					<div class="invalid-feedback">형식에 맞는 이메일 주소를 입력해주세요.</div>
 					<div class="invalid-feedback" id="email-overlap-check" style="display: none;">이미 가입되어 있는 이메일입니다.</div>
 				</div>
+
+				<div class="form-floating mb-3">
+					<input class="form-control" id="user_nick" type="text" placeholder="Enter your nickname" required pattern="^[가-힣a-zA-Z]{2,8}$"/>
+					<label for="user_nick">이름(닉네임)</label>
+					<div class="invalid-feedback">이름(닉네임)은 한글 또는 영어를 포함하는 2자 이상 8자 미만만 가능합니다.</div>
+				</div>
+
 				<!-- Email address input-->
 				<div class="form-floating mb-3">
 					<input class="form-control" id="user_pw" type="password" placeholder="Enter your password" required pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()+|=])[A-Za-z\d~!@#$%^&*()+|=]{8,}"/>
