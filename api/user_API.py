@@ -41,6 +41,10 @@ def signin():
                     message,messageType = 'ID 혹은 비밀번호를 잘못 입력하셨거나 등록되지 않은 ID 입니다.', 'warning'
                     flash(message=message, category=messageType)
                     return jsonify(result="fail")
+            else :
+                message,messageType = 'ID 혹은 비밀번호를 잘못 입력하셨거나 등록되지 않은 ID 입니다.', 'warning'
+                flash(message=message, category=messageType)
+                return jsonify(result="fail")
 
 #회원가입
 @user.route('/signup', methods=['GET','POST'])

@@ -39,6 +39,8 @@ def book_list() :
 
         ratingQuery = db.session.query(BookComment.book_id, func.cast(func.round(func.avg(BookComment.rating)), sqlalchemy.Integer).label('rating')).group_by(BookComment.book_id).subquery()
 
+        'select * from Bookcommnet'
+
         book_list = db.session.query(Book.id, Book.book_name, Book.stock, ratingQuery.c.book_id, ratingQuery.c.rating) \
                     .outerjoin(ratingQuery, ratingQuery.c.book_id == Book.id).offset(offset).limit(limit).all()
 
