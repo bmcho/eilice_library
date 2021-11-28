@@ -27,6 +27,7 @@ def signin():
             else :
                 return render_template('signin.html')
         else :
+            print("!!")
             user_name = request.form.get('user_name')
             user_pw = request.form.get('user_pw')
             user = User.query.filter(User.user_name == user_name).first()
